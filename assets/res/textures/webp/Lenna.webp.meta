@@ -1,0 +1,30 @@
+{
+  "ver": "1.0.0",
+  "uuid": "51f011a7-eb20-4138-9925-2bb3a6d4bf20",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "subMetas": {
+    "Lenna": {
+      "ver": "1.0.3",
+      "uuid": "34c7bc1a-c845-4d81-8b06-b1149f6ff8fa",
+      "rawTextureUuid": "51f011a7-eb20-4138-9925-2bb3a6d4bf20",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 0,
+      "trimY": 0,
+      "width": 512,
+      "height": 512,
+      "rawWidth": 512,
+      "rawHeight": 512,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}
