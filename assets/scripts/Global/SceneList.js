@@ -47,9 +47,69 @@ cc.Class({
             var i;
             for (i = 0; i < scenes.length; i++) {
                 let url = scenes[i].url;
-                let dirname = cc.path.dirname(url).replace()
+                let dirname = cc.path.dirname(url).replace('db://assets/cases/', '');
+                
+                if (dirname === 'db://assets/resources/test assets') {
+                    continue;
+                }
+
+                let scenename = cc.path.basename(url, '.fire');
+                if (scenename === 'TestList') {
+                    continue;
+                }
+
+                if (!dirname) {
+                    dirname = '_root';
+                }
+
+                if (!dict[dirname]) {
+                    dict[dirname] = {};
+                }
+
+                dict[dirname][scenename] = url;
+            }
+        } else {
+            cc.log('failed to get scene list!');
+        }
+
+        let dirs = Object.keys(dict);
+        dirs.sort();
+
+        for (let i = 0; i < dirs.length; i++) {
+            this.sceneList.push({
+                name: dirs[i],
+                url: null
+            });
+
+            let scenenames = Object.keys(dict[dirs[i]]);
+            scenenames.sort();
+            for (let index = 0; index < scenenames.length; index++) {
+                const element = scenenames[index];
+                this.sceneList.push({
+                    name: name,
+                    url: dict[dirs[i][name]]
+                });
             }
         }
+
+        let y = 0;
+        this.node.height = (this.sceneList.length + 1) * 50;
+        for (let index = 0; index < this.sceneList.length; index++) {
+            const element = this.sceneList[index];
+            let item = cc.instantiate(this.itemPrefab).getComponent('ListItem');
+            item.init(this.menu);
+            this.node.addChild(item.node);
+            y -= 50;
+            item.updateItem(index, y, element.name, element.url);
+            this.itemList.push(item);
+        }
+
+    },
+
+    getPositionInView: function (item) {
+        let worldPos = item.parent.convertToWorldSpaceAR(item.position);
+        let viewPos = this.scrollView.node.convertToNodeSpaceAR(worldPos);
+        return viewPos;
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -60,5 +120,41 @@ cc.Class({
 
     },
 
-    // update (dt) {},
+    update (dt) {
+        this.updateTimer += dt;
+        if (this.updateTimer < this.updateInterval) {
+            return;
+        }
+
+        this.updateTimer = 0;
+
+        let items = this.itemList;
+        let buffer = this.bufferZone;
+        let isDown = this.node.y < this.lastContentPosY;
+        let curItemCount = this.itemList.length;
+
+        let offset = 50 * curItemCount;
+
+        for (let i = 0; i < curItemCount; i++) {
+            let item = items[i];
+            let itemNode = item.node;
+            let viewPos = this.getPositionInView(itemNode);
+
+            if (isDown) {
+                if (viewPos.y < -buffer && itemNode.y + offset < 0) {
+                    let newIdx = item.index - curItemCount;
+                    let newInfo = this.sceneList[newIdx];
+                    item.updateItem(newIdx, itemNode.y + offset, newInfo.name, newInfo.url );
+                }
+            } else {
+                if (viewPos.y > buffer && itemNode.y - offset > -this.node.height) {
+                    let newIdx = item.index + curItemCount;
+                    let newInfo = this.sceneList[newIdx];
+                    item.updateItem(newIdx, itemNode.y - offset, newInfo.name, newInfo.url);
+                }
+            }
+        }
+
+        this.lastContentPosY = this.node.y;
+    },
 });
