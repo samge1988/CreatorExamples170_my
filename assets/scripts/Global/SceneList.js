@@ -23,8 +23,8 @@ cc.Class({
             itemComp.url = url;
         }
 
-        item.x = x,
-        item.y = y,
+        item.x = x;
+        item.y = y;
         this.node.addChild(item);
         return item;
     },
@@ -83,27 +83,26 @@ cc.Class({
 
             let scenenames = Object.keys(dict[dirs[i]]);
             scenenames.sort();
-            for (let index = 0; index < scenenames.length; index++) {
-                const element = scenenames[index];
+            for (let j = 0; j < scenenames.length; ++j) {
+                let name = scenenames[j];
                 this.sceneList.push({
                     name: name,
-                    url: dict[dirs[i][name]]
+                    url: dict[dirs[i]][name]
                 });
             }
         }
 
         let y = 0;
         this.node.height = (this.sceneList.length + 1) * 50;
-        for (let index = 0; index < this.sceneList.length; index++) {
-            const element = this.sceneList[index];
+        for (let i = 0; i < this.initItemCount; ++i) {
             let item = cc.instantiate(this.itemPrefab).getComponent('ListItem');
+            let itemInfo = this.sceneList[i];
             item.init(this.menu);
             this.node.addChild(item.node);
             y -= 50;
-            item.updateItem(index, y, element.name, element.url);
+            item.updateItem (i, y, itemInfo.name, itemInfo.url);
             this.itemList.push(item);
         }
-
     },
 
     getPositionInView: function (item) {
@@ -121,40 +120,40 @@ cc.Class({
     },
 
     update (dt) {
-        this.updateTimer += dt;
-        if (this.updateTimer < this.updateInterval) {
-            return;
-        }
+        // this.updateTimer += dt;
+        // if (this.updateTimer < this.updateInterval) {
+        //     return;
+        // }
 
-        this.updateTimer = 0;
+        // this.updateTimer = 0;
 
-        let items = this.itemList;
-        let buffer = this.bufferZone;
-        let isDown = this.node.y < this.lastContentPosY;
-        let curItemCount = this.itemList.length;
+        // let items = this.itemList;
+        // let buffer = this.bufferZone;
+        // let isDown = this.node.y < this.lastContentPosY;
+        // let curItemCount = this.itemList.length;
 
-        let offset = 50 * curItemCount;
+        // let offset = 50 * curItemCount;
 
-        for (let i = 0; i < curItemCount; i++) {
-            let item = items[i];
-            let itemNode = item.node;
-            let viewPos = this.getPositionInView(itemNode);
+        // for (let i = 0; i < curItemCount; i++) {
+        //     let item = items[i];
+        //     let itemNode = item.node;
+        //     let viewPos = this.getPositionInView(itemNode);
 
-            if (isDown) {
-                if (viewPos.y < -buffer && itemNode.y + offset < 0) {
-                    let newIdx = item.index - curItemCount;
-                    let newInfo = this.sceneList[newIdx];
-                    item.updateItem(newIdx, itemNode.y + offset, newInfo.name, newInfo.url );
-                }
-            } else {
-                if (viewPos.y > buffer && itemNode.y - offset > -this.node.height) {
-                    let newIdx = item.index + curItemCount;
-                    let newInfo = this.sceneList[newIdx];
-                    item.updateItem(newIdx, itemNode.y - offset, newInfo.name, newInfo.url);
-                }
-            }
-        }
+        //     if (isDown) {
+        //         if (viewPos.y < -buffer && itemNode.y + offset < 0) {
+        //             let newIdx = item.index - curItemCount;
+        //             let newInfo = this.sceneList[newIdx];
+        //             item.updateItem(newIdx, itemNode.y + offset, newInfo.name, newInfo.url );
+        //         }
+        //     } else {
+        //         if (viewPos.y > buffer && itemNode.y - offset > -this.node.height) {
+        //             let newIdx = item.index + curItemCount;
+        //             let newInfo = this.sceneList[newIdx];
+        //             item.updateItem(newIdx, itemNode.y - offset, newInfo.name, newInfo.url);
+        //         }
+        //     }
+        // }
 
-        this.lastContentPosY = this.node.y;
+        // this.lastContentPosY = this.node.y;
     },
 });
